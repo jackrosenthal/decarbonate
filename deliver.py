@@ -23,7 +23,7 @@ def get_plaintext_body(message):
     return body
 
 msg = email.message_from_file(sys.stdin, policy=email.policy.default)
-m = re.match(r"slack+([A-Za-z0-9-]+)/([A-Z0-9]+)@", msg["To"])
+m = re.match(r"slack+([A-Za-z0-9-]+).([A-Z0-9]+)@", msg["To"])
 token, chanid = m.groups()
 slack = slacker.Slacker(token)
 slacker.chat.post_message(
