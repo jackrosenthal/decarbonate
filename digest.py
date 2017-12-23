@@ -56,16 +56,17 @@ parser.add_argument(
 args = parser.parse_args()
 
 slack = slacker.Slacker(args.token)
-chan_response = slack.channels.list()
+channels = (slack.channels.list().body['channels']
+              + slack.groups.list().body['groups'])
 
 if args.list:
-    for c in chan_response.body['channels']:
+    for c in channels:
         print(c['id'], c['name'])
     sys.exit(0)
 if args.chanid:
     chan_id = args.chanid
 else:
-    for c in chan_response.body['channels']:
+    for c in channels:
         if c['name'] == args.channel:
             chan_id = c['id']
             break
@@ -73,7 +74,7 @@ else:
         print("No such channel: {}".format(args.channel), file=sys.stderr)
         sys.exit(1)
 
-histr = slack.channels.history(
+histr = {'C': slack.channels.history, 'G': slack.groups.history}[chan_id[0]](
     chan_id,
     oldest=
         (datetime.datetime.now()
@@ -94,10 +95,8 @@ worthless_messages = [
     re.compile(text, re.I)
     for text in [
         'awesome!*',
-        'hey!*',
         '!+',
-        'hi!*',
-        '(hi|hey) (folks|everyone)!*',
+        '(hi|hey|hello)( (folks|everyone))?!*',
         'thanks!*',
         'thank you!*',
     ]
@@ -119,7 +118,7 @@ at_mention_p = re.compile('<@([A-Z0-9]+)>')
 
 for msg in reversed(histr.body['messages']):
     if not args.filthy:
-        if msg.get('subtype') in ('channel_join', 'bot_add'):
+        if msg.get('subtype') in ('channel_join', 'group_join', 'bot_add'):
             continue
         for orig, repl in smileys:
             msg['text'] = msg['text'].replace(orig, repl)
