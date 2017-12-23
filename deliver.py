@@ -26,7 +26,7 @@ msg = email.message_from_file(sys.stdin)
 m = re.match(r"slack\+([A-Za-z0-9-]+)\.([A-Z0-9]+)@", msg["To"])
 token, chanid = m.groups()
 slack = slacker.Slacker(token)
-slacker.chat.post_message(
+slack.chat.post_message(
     channel=chanid,
     text="```{}```".format(get_plaintext_body(msg)),
     as_user=True
