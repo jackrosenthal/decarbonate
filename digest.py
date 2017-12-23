@@ -82,6 +82,8 @@ histr = {'C': slack.channels.history, 'G': slack.groups.history}[chan_id[0]](
     count=1000
 )
 
+me = slack.auth.test().body
+
 lastuser = ''
 lasttime = datetime.datetime.fromtimestamp(0)
 
@@ -117,6 +119,8 @@ smileys = [
 at_mention_p = re.compile('<@([A-Z0-9]+)>')
 
 for msg in reversed(histr.body['messages']):
+    if msg.get("user") == me["user_id"]:
+        continue
     if not args.filthy:
         if msg.get('subtype') in ('channel_join', 'group_join', 'bot_add'):
             continue
