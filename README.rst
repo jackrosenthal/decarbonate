@@ -10,8 +10,8 @@ with two scripts:
 
 1. ``digest.py``, which downloads messages from a certain Slack channel over a
    certain time period and concatenates them to ``stdout``.
-2. ``deliver.py``, which accepts an Email on stdin and posts a message with the
-   email body to a certain slack channel.
+2. ``deliver.py``, which accepts an Email on ``stdin`` and posts a message with
+   the email body to a certain slack channel.
 
 You will need a slack API token to use these. To get one, set up a new "app" in
 Slack, and give it most of the permissions. (what could go wrong?)
